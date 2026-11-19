@@ -20,6 +20,45 @@ th,td{padding:12px 0;border-bottom:1px solid #e6e9e5;text-align:left}td:last-chi
 .sum{font-weight:700}.error{color:#a32424}.note{font-size:13px}h2{font-size:20px}#results[hidden],.error[hidden]{display:none}
 @media(max-width:700px){.grid,.totals{grid-template-columns:1fr}.panel{padding:18px}}
 @media print{body{background:white}main{padding:0}button,nav{display:none}.panel,.total{break-inside:avoid}.total{background:white;color:black;border:1px solid #aaa}details>*{display:block!important}}
+/* Second Approach website colours */
+body {
+  background: #ffffff;
+  color: #202124;
+}
+
+p, small { color: #5f6368; }
+
+.card, .panel {
+  background: #ffffff;
+  border-color: #dadce0;
+}
+
+.card:hover, .card:focus-visible {
+  border-color: #356b8c;
+  box-shadow: 0 8px 24px #356b8c15;
+}
+
+input, select {
+  color: #202124;
+  border-color: #dadce0;
+}
+
+button, .total {
+  background: #356b8c;
+  color: #ffffff;
+}
+
+button.secondary {
+  background: #f3f5f7;
+  color: #202124;
+}
+
+@media print {
+  .total {
+    background: white;
+    color: black;
+  }
+}
 </style>
 </head>
 <body>
