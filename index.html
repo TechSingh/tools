@@ -1,295 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Second Approach | Tools</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #f7f6f2;
-      color: #183b32;
-      font-family: system-ui, sans-serif;
-    }
-    main {
-      max-width: 900px;
-      margin: auto;
-      padding: 80px 24px;
-    }
-    .brand {
-      font-size: 12px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-    h1 {
-      margin: 24px 0 16px;
-      font: normal clamp(40px, 7vw, 64px) Georgia, serif;
-    }
-    p { color: #596660; line-height: 1.7; }
-    .card {
-      display: block;
-      margin-top: 40px;
-      padding: 28px;
-      border: 1px solid #d9dfd9;
-      border-radius: 16px;
-      background: white;
-      color: inherit;
-      text-decoration: none;
-    }
-    .card:hover, .card:focus-visible {
-      border-color: #183b32;
-      box-shadow: 0 8px 24px #183b3210;
-    }
-    h2 { margin-top: 0; font-size: 22px; }
-    .action { font-weight: 600; }
-    footer { margin-top: 64px; font-size: 13px; }
-  /* Second Approach website colours */
-body {
-  background: #ffffff;
-  color: #202124;
-}
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Tools &amp; Calculators | Second Approach</title>
+<meta name="description" content="Free practical tools from Second Approach. Calculate Ontario employee take-home pay, employer CPP and EI, and CRA payroll remittances.">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<style>
+:root{--navy:#082d57;--blue:#356b8c;--ink:#202124;--muted:#596674;--line:#dce4ec;--pale:#edf4fa;--green:#e1f1e5}
+*{box-sizing:border-box}html{scroll-padding-top:100px}body{margin:0;background:#f6f8fb;color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--blue)}
+.skip-link{position:absolute;left:16px;top:-100px;z-index:200;background:white;padding:12px}.skip-link:focus{top:12px}
+.sa-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 3px 18px #082d5708}
+.sa-bar{max-width:1280px;min-height:78px;padding:12px 24px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.sa-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);font-size:20px;font-weight:750;white-space:nowrap}
+.sa-brand img{display:block;width:48px;height:48px;object-fit:contain}
+.sa-links{display:flex;align-items:center;gap:26px}.sa-links a{color:#303a45;text-decoration:none;font-size:15px;font-weight:550;padding:12px 0;border-bottom:2px solid transparent}
+.sa-links a:hover,.sa-links a[aria-current]{color:var(--blue)}.sa-links a[aria-current]{font-weight:750;border-bottom-color:var(--blue)}
+.sa-toggle{display:none;margin:0;padding:10px 14px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--navy);font:600 15px system-ui;cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #1482ad;outline-offset:4px}
+.button,button.primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border:1px solid var(--blue);border-radius:9px;background:var(--blue);color:white;text-decoration:none;font:650 15px system-ui;cursor:pointer;min-height:46px}
+.button:hover,button.primary:hover{background:#285873;border-color:#285873}.button.light{background:white;color:var(--navy);border-color:white}.button.light:hover{background:#edf4fa}
+.sa-footer{max-width:1140px;margin:20px auto 0;padding:26px 24px 32px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media(max-width:1000px){.sa-bar{flex-wrap:wrap;gap:0;min-height:70px;padding:10px 18px}.sa-brand{font-size:18px;gap:7px}.sa-brand img{width:40px;height:40px}.sa-toggle{display:block}.sa-links{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;margin-top:12px;padding-top:8px;border-top:1px solid var(--line);max-height:65vh;overflow-y:auto}.sa-links.sa-open{display:flex}.sa-links a{padding:14px 4px}.sa-links a[aria-current]{border-bottom-color:transparent}}
+@media(max-width:400px){.sa-brand{font-size:16px}.sa-bar{padding-inline:12px}.sa-toggle{padding-inline:10px}}
+@media print{.sa-header,.skip-link,.no-print,.sa-footer{display:none!important}body{background:white}}
 
-p, small { color: #5f6368; }
-
-.card, .panel {
-  background: #ffffff;
-  border-color: #dadce0;
-}
-
-.card:hover, .card:focus-visible {
-  border-color: #356b8c;
-  box-shadow: 0 8px 24px #356b8c15;
-}
-
-input, select {
-  color: #202124;
-  border-color: #dadce0;
-}
-
-button, .total {
-  background: #356b8c;
-  color: #ffffff;
-}
-
-button.secondary {
-  background: #f3f5f7;
-  color: #202124;
-}
-
-@media print {
-  .total {
-    background: white;
-    color: black;
-  }
-}
-    /* Shared Second Approach navigation */
-.sa-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: #fff;
-  border-bottom: 1px solid #dadce0;
-  font-family: system-ui, sans-serif;
-}
-
-.sa-bar {
-  max-width: 1280px;
-  min-height: 76px;
-  padding: 12px 24px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.sa-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  color: #082d57;
-  font-size: 19px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.sa-brand img {
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
-}
-
-.sa-links {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.sa-links a {
-  color: #303134;
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 10px 0;
-}
-
-.sa-links a:hover,
-.sa-links a[aria-current] {
-  color: #356b8c;
-}
-
-.sa-links a[aria-current] {
-  font-weight: 700;
-}
-
-.sa-toggle {
-  display: none;
-  margin: 0;
-  padding: 10px 14px;
-  border: 1px solid #dadce0;
-  border-radius: 8px;
-  background: #fff;
-  color: #082d57;
-  font: 600 15px system-ui, sans-serif;
-  cursor: pointer;
-}
-
-.sa-header a:focus-visible,
-.sa-toggle:focus-visible {
-  outline: 3px solid #356b8c;
-  outline-offset: 4px;
-}
-
-@media (max-width: 1000px) {
-  .sa-bar {
-    flex-wrap: wrap;
-    gap: 0;
-    min-height: 68px;
-    padding: 10px 18px;
-  }
-
-  .sa-brand {
-    font-size: 17px;
-    gap: 8px;
-  }
-
-  .sa-brand img {
-    width: 38px;
-    height: 38px;
-  }
-
-  .sa-toggle {
-    display: block;
-  }
-
-  .sa-links {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    margin-top: 12px;
-    padding-top: 8px;
-    border-top: 1px solid #dadce0;
-    max-height: 65vh;
-    overflow-y: auto;
-  }
-
-  .sa-links.sa-open {
-    display: flex;
-  }
-
-  .sa-links a {
-    padding: 14px 4px;
-  }
-}
-
-@media print {
-  .sa-header {
-    display: none;
-  }
-}
-  </style>
-  <link rel="icon" type="image/png" href="/assets/favicon.png">
-</head>
-<body>
-  <main>
-    <div class="brand">Second Approach</div>
-    <h1>Everyday tools.<br>Clearer decisions.</h1>
-    <p>Simple calculators for work, business and everyday life.</p>
-
-    <a class="card" href="./cpp-ei-calc/">
-      <h2>Ontario Payroll Calculator</h2>
-      <p>Estimate take-home pay, employer CPP and EI contributions,
-         and your total CRA payroll remittance.</p>
-      <span class="action">Open calculator →</span>
-    </a>
-
-    <footer>Second Approach · Tools &amp; Calculators</footer>
-  </main>
-  <script>
-(() => {
-  const button = document.querySelector('.sa-toggle');
-  const menu = document.querySelector('#sa-navigation');
-
-  function setOpen(open) {
-    button.setAttribute('aria-expanded', String(open));
-    button.setAttribute(
-      'aria-label',
-      open ? 'Close navigation menu' : 'Open navigation menu'
-    );
-    button.textContent = open ? 'Close ×' : 'Menu ☰';
-    menu.classList.toggle('sa-open', open);
-  }
-
-  button.addEventListener('click', () => {
-    setOpen(button.getAttribute('aria-expanded') !== 'true');
-  });
-
-  menu.addEventListener('click', event => {
-    if (event.target.closest('a')) setOpen(false);
-  });
-
-  document.addEventListener('keydown', event => {
-    if (
-      event.key === 'Escape' &&
-      button.getAttribute('aria-expanded') === 'true'
-    ) {
-      setOpen(false);
-      button.focus();
-    }
-  });
-})();
-</script>
-</body>
-  <header class="sa-header">
+.home-main{max-width:1140px;margin:auto;padding:50px 24px 36px}.hero{max-width:850px;margin-bottom:34px}.hero h1{font:normal clamp(36px,5vw,58px)/1.12 Georgia,serif;letter-spacing:-1.5px;margin:0 0 18px;color:var(--navy)}.hero p{font-size:18px;line-height:1.7;color:var(--muted);max-width:650px;margin:0}
+.section-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:12px 0 18px}.section-heading h2{margin:0;font-size:22px;color:var(--navy)}.count{font-size:13px;color:var(--muted);background:#e7edf4;padding:6px 11px;border-radius:20px}
+.tool-card{border:1px solid #b5cadc;border-radius:20px;overflow:hidden;background:white;box-shadow:0 12px 36px #082d5710;display:grid;grid-template-columns:1.7fr 1fr}.tool-content{padding:34px}.category{display:inline-block;font-size:12px;font-weight:750;letter-spacing:1px;text-transform:uppercase;color:var(--blue);background:var(--pale);padding:7px 11px;border-radius:6px}.tool-content h3{font-size:clamp(26px,4vw,34px);line-height:1.2;margin:18px 0 12px;color:var(--navy)}.tool-content p{font-size:16px;line-height:1.75;color:var(--muted);max-width:560px;margin:0 0 22px}.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}.tags span{font-size:12px;background:#f0f4f8;border:1px solid #dfe7ef;padding:6px 10px;border-radius:6px;color:#465b6d}
+.tool-side{background:var(--navy);color:white;padding:34px;display:flex;flex-direction:column;justify-content:center;gap:22px}.tool-side .number{font-size:13px;font-weight:700;color:#9ed6ec;letter-spacing:1px}.tool-side strong{display:block;font-size:18px;margin:4px 0}.tool-side p{margin:0;font-size:14px;line-height:1.6;color:#d8e5f1}.home-note{font-size:14px;line-height:1.7;color:var(--muted);margin:24px 0 0}
+@media(max-width:700px){.home-main{padding:32px 18px}.hero h1{letter-spacing:-.8px}.hero p{font-size:16px}.tool-card{grid-template-columns:1fr}.tool-content,.tool-side{padding:24px}.tool-side{gap:18px}.section-heading{align-items:flex-start}.button{width:100%}}
+</style></head><body><a class="skip-link" href="#main-content">Skip to main content</a>
+<header class="sa-header">
   <div class="sa-bar">
-    <a class="sa-brand" href="https://www.secondapproach.ca/">
-      <img src="/assets/sa-monogram.png" alt="">
-      <span>Second Approach</span>
-    </a>
-
-    <button
-      class="sa-toggle"
-      type="button"
-      aria-expanded="false"
-      aria-controls="sa-navigation"
-      aria-label="Open navigation menu">
-      Menu ☰
-    </button>
-
+    <a class="sa-brand" href="https://www.secondapproach.ca/"><img src="/assets/sa-monogram.png" alt="" width="48" height="48"><span>Second Approach</span></a>
+    <button class="sa-toggle" type="button" aria-expanded="false" aria-controls="sa-navigation" aria-label="Open navigation menu">Menu ☰</button>
     <nav class="sa-links" id="sa-navigation" aria-label="Main navigation">
       <a href="https://www.secondapproach.ca/">Home</a>
       <a href="https://www.secondapproach.ca/services">Services</a>
       <a href="https://www.secondapproach.ca/about">About</a>
-      <a href="https://tools.secondapproach.ca/" aria-current="location">
-        Free Tools
-      </a>
+      <a href="/" aria-current="location">Free Tools</a>
       <a href="https://www.secondapproach.ca/testimonials">Testimonials</a>
       <a href="https://www.secondapproach.ca/contact">Contact</a>
     </nav>
   </div>
 </header>
-</html>
+<main class="home-main" id="main-content" tabindex="-1">
+  <section class="hero"><h1>Everyday tools.<br>Clearer decisions.</h1><p>Practical calculators that make work, business and everyday decisions a little easier.</p></section>
+  <section aria-labelledby="available-tools">
+    <div class="section-heading"><h2 id="available-tools">Explore our tools</h2><span class="count">1 tool available</span></div>
+    <article class="tool-card">
+      <div class="tool-content"><span class="category">Payroll &amp; Business</span><h3>Ontario Payroll Calculator</h3><p>See what your employee takes home, what CPP and EI cost your business, and how much to remit to CRA — all in one calculation.</p>
+        <div class="tags"><span>Ontario · 2026</span><span>CPP &amp; EI</span><span>Income tax</span><span>Free to use</span></div>
+        <a class="button" href="/cpp-ei-calc/">Open Payroll Calculator <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="tool-side"><div><span class="number">01 / EMPLOYEE</span><strong>Take-home pay</strong><p>Gross salary less tax, CPP and EI.</p></div><div><span class="number">02 / EMPLOYER</span><strong>Your payroll cost</strong><p>Salary plus employer CPP and EI.</p></div><div><span class="number">03 / CRA</span><strong>Total remittance</strong><p>Employee deductions and employer contributions.</p></div></div>
+    </article>
+  </section>
+  <p class="home-note">No sign-up required. Payroll calculations run in your browser.</p>
+</main><footer class="sa-footer"><span>Second Approach · Tools &amp; Calculators</span><a href="https://www.secondapproach.ca/">Visit our main website ↗</a></footer><script>
+(() => {
+  const toggle = document.querySelector('.sa-toggle');
+  const menu = document.querySelector('#sa-navigation');
+  const setOpen = open => {
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    toggle.textContent = open ? 'Close ×' : 'Menu ☰';
+    menu.classList.toggle('sa-open', open);
+  };
+  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  menu.addEventListener('click', event => { if (event.target.closest('a')) setOpen(false); });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { setOpen(false); toggle.focus(); }
+  });
+})();
+</script></body></html>
