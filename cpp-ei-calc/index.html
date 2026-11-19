@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ontario Payroll Calculator | Second Approach</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f6f2;color:#183b32;font-family:system-ui,sans-serif}
+main{max-width:1050px;margin:auto;padding:40px 20px}a{color:inherit}h1{font:normal clamp(32px,5vw,52px) Georgia,serif;margin:24px 0 12px}
+p,small{line-height:1.65;color:#52635b}.tag{font-size:12px;letter-spacing:2px;text-transform:uppercase}
+.panel{background:white;border:1px solid #d9dfd9;border-radius:16px;padding:24px;margin:22px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}label{display:block;font-size:14px;font-weight:600}
+input,select,button{font:inherit}input,select{width:100%;padding:12px;margin-top:8px;border:1px solid #b8c5bd;border-radius:8px;background:white;color:#183b32}
+button{padding:12px 20px;border:0;border-radius:8px;background:#183b32;color:white;cursor:pointer;margin:16px 8px 0 0}
+button.secondary{background:#e8ede8;color:#183b32}summary{cursor:pointer;font-weight:600}details .grid{margin-top:18px}
+.totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.total{background:#183b32;color:white;border-radius:12px;padding:22px}
+.total span{display:block;font-size:13px}.total strong{display:block;font-size:clamp(24px,3vw,34px);margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:14px}caption{text-align:left;font-size:20px;font-weight:600;padding:8px 0 16px}
+th,td{padding:12px 0;border-bottom:1px solid #e6e9e5;text-align:left}td:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sum{font-weight:700}.error{color:#a32424}.note{font-size:13px}h2{font-size:20px}#results[hidden],.error[hidden]{display:none}
+@media(max-width:700px){.grid,.totals{grid-template-columns:1fr}.panel{padding:18px}}
+@media print{body{background:white}main{padding:0}button,nav{display:none}.panel,.total{break-inside:avoid}.total{background:white;color:black;border:1px solid #aaa}details>*{display:block!important}}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="../">← All tools</a></nav>
+<h1>Ontario Payroll Calculator</h1>
+<div class="tag">Ontario · 2026 · Canadian dollars</div>
+<p>Estimate employee take-home pay, your additional CPP and EI costs, and the total payroll remittance to CRA.</p>
+<form id="payroll" class="panel">
+<div class="grid">
+<label>Gross salary for this pay period ($)
+<input id="gross" type="number" min="0" max="1000000" step="0.01" value="5000" required></label>
+<label>Pay frequency
+<select id="frequency"><option value="12">Monthly — 12 pays/year</option><option value="24">Twice monthly — 24 pays/year</option><option value="26">Biweekly — 26 pays/year</option><option value="27">Biweekly — 27 pays/year</option><option value="52">Weekly — 52 pays/year</option><option value="53">Weekly — 53 pays/year</option></select></label>
+</div>
+<p class="note">Enter the amount per pay, not annual salary. For $60,000/year paid monthly, enter $5,000.</p>
+<details>
+<summary>Year-to-date amounts and tax settings</summary>
+<p class="note">Enter amounts BEFORE this pay, from this employer only. Leave zero for the first pay of the year or a new employer. Do not include another employer's deductions.</p>
+<div class="grid">
+<label>Pensionable earnings so far this year ($)<input id="yGross" type="number" min="0" max="10000000" step="0.01" value="0" required></label>
+<label>Employee CPP deducted so far, excluding CPP2 ($)<input id="yCpp" type="number" min="0" max="4230.45" step="0.01" value="0" required></label>
+<label>Employee CPP2 deducted so far ($)<input id="yCpp2" type="number" min="0" max="416" step="0.01" value="0" required></label>
+<label>Employee EI deducted so far ($)<input id="yEi" type="number" min="0" max="1123.07" step="0.01" value="0" required></label>
+<label>Federal TD1 total claim ($, annual)<input id="fClaim" type="number" min="0" max="1000000" step="0.01" placeholder="Blank = automatic basic personal amount"></label>
+<label>Ontario TD1ON total claim ($, annual)<input id="oClaim" type="number" min="0" max="1000000" step="0.01" value="12989" required></label>
+<label>Additional income tax requested per pay ($)<input id="extra" type="number" min="0" max="1000000" step="0.01" value="0" required></label>
+</div>
+<p class="note">Enter 0 in both TD1 claim fields when no personal amounts can be claimed. A blank federal claim uses the income-adjusted basic amount. No additional Ontario dependant reduction is included.</p>
+</details>
+<button type="submit">Calculate payroll</button>
+<button type="button" class="secondary" id="print">Print / Save PDF</button>
+<p id="error" class="error" role="alert" hidden></p>
+</form>
+<section id="results" hidden aria-live="polite" aria-atomic="true">
+<p id="context"></p>
+<div class="totals">
+<div class="total"><span>Employee take-home pay</span><strong id="net"></strong></div>
+<div class="total"><span>Employer cost: salary + CPP/EI</span><strong id="cost"></strong></div>
+<div class="total"><span>Total CRA remittance</span><strong id="cra"></strong></div>
+</div>
+<div class="grid">
+<div class="panel"><table><caption>Employee pay</caption><tbody id="employee"></tbody></table></div>
+<div class="panel"><table><caption>Employer cost</caption><tbody id="employer"></tbody></table></div>
+</div>
+<div class="panel"><table><caption>Payable to CRA for this pay</caption><tbody id="remittance"></tbody></table>
+<p class="note">Includes employee deductions plus employer contributions. Take-home pay + CRA remittance = salary + employer CPP/EI. This is an amount calculation, not a remittance due-date calculation.</p></div>
+</section>
+<section class="panel note">
+<h2>Scope and assumptions</h2>
+<p>2026 regular salary in Ontario, all salary pensionable and insurable, employee age 18–64 throughout the year and CPP-eligible for all 12 months. Standard employer EI multiplier of 1.4. Other ages, CPP elections, exemptions, bonuses, taxable benefits, pensions, RRSP/union deductions and province transfers require a different calculation.</p>
+<p>Employer cost shown covers salary and employer CPP/EI only; it excludes WSIB, employer health tax, vacation pay added separately, benefits and other employment costs. Income tax is estimated withholding, not the employee's final annual tax bill.</p>
+<p>Uses CRA T4127 Option 1, including Ontario surtax and health premium. Verify against <a href="https://www.canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/payroll-deductions-online-calculator.html" target="_blank" rel="noopener">CRA's payroll calculator</a> before processing actual payroll. This tool has not been independently certified or checked against PDOC.</p>
+<p><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html" target="_blank" rel="noopener">CRA 2026 formulas and rates</a> · <a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jul/t4127-jul-payroll-deductions-formulas.html" target="_blank" rel="noopener">July update</a> (Ontario unchanged). Rates must be updated for other tax years.</p>
+<p>All calculations run in your browser. This page does not send or save your inputs. Second Approach · Version 1.0</p>
+</section>
+</main>
+<script>
+'use strict';
+const round = n => Math.round((n + Number.EPSILON) * 100) / 100;
+const positive = n => Math.max(0, n);
+// T4127 rate/constant method; do not replace with marginal-bracket sums.
+function bracketTax(a, brackets) {
+  let b = brackets[0];
+  for (const row of brackets) if (a > row[0]) b = row;
+  return positive(a * b[1] - b[2]);
+}
+function healthPremium(a) {
+  if (a <= 20000) return 0;
+  if (a <= 36000) return Math.min(300, (a - 20000) * .06);
+  if (a <= 48000) return Math.min(450, 300 + (a - 36000) * .06);
+  if (a <= 72000) return Math.min(600, 450 + (a - 48000) * .25);
+  if (a <= 200000) return Math.min(750, 600 + (a - 72000) * .25);
+  return Math.min(900, 750 + (a - 200000) * .25);
+}
+function calculate(x) {
+  const p = x.p, g = x.g;
+  const exemption = Math.floor(350000 / p) / 100;
+  const cpp = round(positive(Math.min(4230.45 - x.yCpp, (g - exemption) * .0595)));
+  const cpp2 = round(positive(Math.min(416 - x.yCpp2, (x.yGross + g - Math.max(x.yGross, 74600)) * .04)));
+  const ei = round(positive(Math.min(1123.07 - x.yEi, g * .0163)));
+  const employerEi = round(ei * 1.4);
+  const deduction = cpp * (.01 / .0595) + cpp2;
+  const a = positive(p * (g - deduction));
+  const bpa = round(16452 - Math.min(1623, positive(a - 181440) * 1623 / 77042));
+  const claim = x.fClaim === null ? bpa : x.fClaim;
+  // Retain maximum credits in and after the period annual caps are reached.
+  const cppCredit = round(x.yCpp + cpp) >= 4230.45 ? 3519.45 : Math.min(3519.45, Math.max(p * cpp, x.yCpp) * (.0495 / .0595));
+  const eiCredit = round(x.yEi + ei) >= 1123.07 ? 1123.07 : Math.min(1123.07, Math.max(p * ei, x.yEi));
+  const credits = cppCredit + eiCredit;
+  const federalAnnual = positive(bracketTax(a, [[0,.14,0],[58523,.205,3804],[117045,.26,10241],[181440,.29,15685],[258482,.33,26024]]) - .14 * (claim + credits + Math.min(1501, p * g)));
+  const basicOntario = positive(bracketTax(a, [[0,.0505,0],[53891,.0915,2210],[107785,.1116,4376],[150000,.1216,5876],[220000,.1316,8076]]) - .0505 * (x.oClaim + credits));
+  const surtax = .20 * positive(basicOntario - 5818) + .36 * positive(basicOntario - 7446);
+  const reduction = positive(Math.min(basicOntario + surtax, 600 - basicOntario - surtax));
+  const ontarioAnnual = positive(basicOntario + surtax - reduction + healthPremium(a));
+  const tax = g === 0 ? 0 : round((federalAnnual + ontarioAnnual) / p + x.extra);
+  const federal = g === 0 ? 0 : round(federalAnnual / p);
+  const ontario = g === 0 ? 0 : round(tax - federal - x.extra);
+  const net = round(g - cpp - cpp2 - ei - tax);
+  const extraCost = round(cpp + cpp2 + employerEi);
+  const cost = round(g + extraCost);
+  const cra = round(tax + 2 * (cpp + cpp2) + ei + employerEi);
+  return {g,cpp,cpp2,ei,employerEi,tax,federal,ontario,net,extraCost,cost,cra};
+}
+const $ = id => document.getElementById(id);
+const money = n => new Intl.NumberFormat('en-CA', {style:'currency',currency:'CAD'}).format(n);
+const row = (label, amount, total=false) => `<tr${total ? ' class="sum"' : ''}><td>${label}</td><td>${money(amount)}</td></tr>`;
+function render() {
+  $('results').hidden = true;
+  $('error').hidden = true;
+  if (!$('payroll').reportValidity()) return;
+  const value = id => Number($(id).value);
+  const x = {g:value('gross'),p:value('frequency'),yGross:value('yGross'),yCpp:value('yCpp'),yCpp2:value('yCpp2'),yEi:value('yEi'),fClaim:$('fClaim').value === '' ? null : value('fClaim'),oClaim:value('oClaim'),extra:value('extra')};
+  const r = calculate(x);
+  if (r.net < 0) {
+    $('error').textContent = 'Deductions exceed gross pay. Review the salary, tax settings and year-to-date amounts.';
+    $('error').hidden = false;
+    return;
+  }
+  $('net').textContent = money(r.net); $('cost').textContent = money(r.cost); $('cra').textContent = money(r.cra);
+  $('context').textContent = `2026 Ontario · ${$('frequency').selectedOptions[0].text} · Results are for ONE pay period. Annualized gross salary: ${money(x.g * x.p)}.`;
+  $('employee').innerHTML = row('Gross salary',r.g) + row('Federal income tax',-r.federal) + row('Ontario tax, including health premium',-r.ontario) + row('Additional requested income tax',-x.extra*(x.g>0)) + row('Employee CPP',-r.cpp) + row('Employee CPP2',-r.cpp2) + row('Employee EI',-r.ei) + row('Take-home pay',r.net,true);
+  $('employer').innerHTML = row('Gross salary',r.g) + row('Employer CPP',r.cpp) + row('Employer CPP2',r.cpp2) + row('Employer EI',r.employerEi) + row('Extra CPP/EI cost',r.extraCost,true) + row('Salary + employer CPP/EI',r.cost,true);
+  $('remittance').innerHTML = row('Employee income tax withheld',r.tax) + row('CPP: employee + employer',round(2*r.cpp)) + row('CPP2: employee + employer',round(2*r.cpp2)) + row('EI: employee + employer',round(r.ei+r.employerEi)) + row('Total CRA remittance',r.cra,true);
+  $('results').hidden = false;
+}
+$('payroll').addEventListener('submit', event => {event.preventDefault();render();});
+$('payroll').addEventListener('input', () => {$('results').hidden=true;});
+$('print').addEventListener('click', () => {render();if (!$('results').hidden) window.print();});
+render();
+</script>
+</body>
+</html>
