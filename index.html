@@ -44,6 +44,45 @@
     h2 { margin-top: 0; font-size: 22px; }
     .action { font-weight: 600; }
     footer { margin-top: 64px; font-size: 13px; }
+  /* Second Approach website colours */
+body {
+  background: #ffffff;
+  color: #202124;
+}
+
+p, small { color: #5f6368; }
+
+.card, .panel {
+  background: #ffffff;
+  border-color: #dadce0;
+}
+
+.card:hover, .card:focus-visible {
+  border-color: #356b8c;
+  box-shadow: 0 8px 24px #356b8c15;
+}
+
+input, select {
+  color: #202124;
+  border-color: #dadce0;
+}
+
+button, .total {
+  background: #356b8c;
+  color: #ffffff;
+}
+
+button.secondary {
+  background: #f3f5f7;
+  color: #202124;
+}
+
+@media print {
+  .total {
+    background: white;
+    color: black;
+  }
+}
   </style>
 </head>
 <body>
